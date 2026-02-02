@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>valentine?</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- ROSES (always visible, no extra rotation) -->
+  <div class="rose rose-left" aria-hidden="true">
+    <div class="rose-float">
+      <img class="rose-img" src="rose.gif" alt="">
+    </div>
+  </div>
+
+  <div class="rose rose-right" aria-hidden="true">
+    <div class="rose-float">
+      <img class="rose-img" src="rose.gif" alt="">
+    </div>
+  </div>
+
+  <main class="card" id="card">
+
+    <!-- INTRO / LETTER SCREEN (shows first) -->
+    <div id="intro">
+      <h1>Hiiii <span id="herNameIntro">you</span> 💌</h1>
+
+      <div class="letter">
+        <p id="letterText">
+          hey shonamma,
+          <br><br>
+          i wanted to say this properly, so i made this little page for you.
+          <br><br>
+          Hi love, happy Valentine’s Day. I just wanted to remind you how much you mean to me and how grateful I am to have you in my life. You make my days brighter with your kindness, your smile, and the way you always understand me. I’m really lucky to be yours, and I hope today makes you feel as special as you make me feel.
+          <br><br>
+          okay… ready? 😅
+        </p>
+      </div>
+
+      <button id="proceed" class="proceed-btn">proceed →</button>
+      <div class="tiny" id="skipHint">tip: click proceed to skip typing</div>
+    </div>
+
+    <!-- YES/NO SCREEN (hidden at start) -->
+    <div id="ask" class="hidden">
+      <h1>Hiiii <span id="herName">you</span> 💌</h1>
+
+      <p class="msg">
+        I made a this for you because you’re really special to me.
+        <br>will you be my valentine? 🥺🌹
+      </p>
+
+      <div class="btns">
+        <button id="yes">yes!! 💖</button>
+        <button id="no">no</button>
+      </div>
+
+      <div class="tiny">ps: the “no” button is a little shy </div>
+      <div class="tiny">you can say no… but i’ll be a little sad 😭</div>
+    </div>
+
+    <div id="win" class="result hidden">
+      <h2>YAYYYYY 💞</h2>
+      <p>okay it’s official. you’re my valentine 😌</p>
+      <div class="chip" id="dateIdea">valentine plan: call + movie + snacks 🍿📞</div>
+    </div>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
