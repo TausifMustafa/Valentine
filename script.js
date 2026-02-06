@@ -1,17 +1,31 @@
-// --- customize these ---
 const NAME = "Shonamma";
 const PLAN_TEXT = "Valentine plan: flowers + food + show + cuddles 🍿📞";
-// ------------------------
 
 document.getElementById("herName").textContent = NAME;
 document.getElementById("dateIdea").textContent = PLAN_TEXT;
 
-// intro name (same as main)
 const herNameIntro = document.getElementById("herNameIntro");
 if (herNameIntro) herNameIntro.textContent = NAME;
 
 const yesBtn = document.getElementById("yes");
 const noBtn = document.getElementById("no");
+
+const intro = document.getElementById("intro");
+const ask = document.getElementById("ask");
+const proceedBtn = document.getElementById("proceed");
+const skipHint = document.getElementById("skipHint");
+
+const p1 = document.getElementById("p1");
+const p2 = document.getElementById("p2");
+const p3 = document.getElementById("p3");
+
+function setStep(step) {
+  [p1, p2, p3].forEach((el) => el && el.classList.remove("active"));
+  if (step === 1 && p1) p1.classList.add("active");
+  if (step === 2 && p2) p2.classList.add("active");
+  if (step === 3 && p3) p3.classList.add("active");
+}
+setStep(1);
 
 let noMoves = 0;
 
@@ -22,8 +36,7 @@ function popHearts(count = 20) {
     h.style.left = Math.random() * 100 + "vw";
     h.style.bottom = "-20px";
     h.style.animationDuration = (4 + Math.random() * 3) + "s";
-    h.style.transform =
-      "rotate(45deg) scale(" + (0.6 + Math.random() * 1.2) + ")";
+    h.style.transform = "rotate(45deg) scale(" + (0.6 + Math.random() * 1.2) + ")";
     document.body.appendChild(h);
     setTimeout(() => h.remove(), 8000);
   }
@@ -32,7 +45,8 @@ function popHearts(count = 20) {
 yesBtn.addEventListener("click", () => {
   document.getElementById("ask").classList.add("hidden");
   document.getElementById("win").classList.remove("hidden");
-  popHearts(40);
+  popHearts(48);
+  setStep(3);
 });
 
 // playful “no” button: moves away
@@ -50,12 +64,6 @@ function moveNoButton() {
 
 noBtn.addEventListener("mouseenter", moveNoButton);
 noBtn.addEventListener("click", moveNoButton);
-
-// --- intro letter screen logic ---
-const intro = document.getElementById("intro");
-const ask = document.getElementById("ask");
-const proceedBtn = document.getElementById("proceed");
-const skipHint = document.getElementById("skipHint");
 
 // --- typewriter animation ---
 const letterEl = document.getElementById("letterText");
@@ -76,7 +84,6 @@ let fullLetter = (letterEl.innerHTML || "").trim();
 fullLetter = fullLetter.replace(/<br\s*\/?>/gi, "\n").replace(/&nbsp;/g, " ");
 fullLetter = fullLetter.replace(/<[^>]*>/g, "");
 
-// normalize whitespace/newlines so formatting/indentation doesn't create huge gaps
 fullLetter = fullLetter
   .replace(/\r\n/g, "\n")
   .replace(/[ \t]+\n/g, "\n")
@@ -110,6 +117,9 @@ function typeStep() {
 
 setTimeout(typeStep, START_DELAY_MS);
 
+// proceed button behavior:
+// - if typing not finished: finish instantly
+// - if finished: go to yes/no page
 proceedBtn.addEventListener("click", () => {
   if (!typingDone) {
     if (timerId) clearTimeout(timerId);
@@ -123,5 +133,6 @@ proceedBtn.addEventListener("click", () => {
 
   intro.classList.add("hidden");
   ask.classList.remove("hidden");
-  popHearts(12);
+  popHearts(14);
+  setStep(2);
 });
