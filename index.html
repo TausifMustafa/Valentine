@@ -3,122 +3,86 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="theme-color" content="#ff4d6d">
   <title>valentine?</title>
-
-  <!-- optional: nicer modern font (safe to keep) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-  <!-- animated background blobs -->
-  <div class="bg" aria-hidden="true">
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-    <div class="blob b3"></div>
-    <div class="noise"></div>
-  </div>
 
-  <!-- ROSES (always visible, gif plays normally) -->
-  <div class="rose rose-left" aria-hidden="true">
-    <div class="rose-float">
-      <img class="rose-img" src="rose.gif" alt="">
-    </div>
-  </div>
+  <!-- Top banner title -->
+  <header class="top-banner" aria-hidden="true">
+    <div class="banner-pill">TO MY SPECIAL GIRL</div>
+  </header>
 
-  <div class="rose rose-right" aria-hidden="true">
-    <div class="rose-float">
-      <img class="rose-img" src="rose.gif" alt="">
-    </div>
-  </div>
+  <!-- Decorative falling petals layer -->
+  <div id="petals" aria-hidden="true"></div>
 
-  <main class="shell">
-    <section class="card" id="card">
+  <!-- Main interactive card -->
+  <main class="card" id="card" data-tilt="true">
 
-      <header class="top">
-        <div class="pill">
-          <span class="dot"></span>
-          made with love
-        </div>
+    <!-- Top chrome + step indicator -->
+    <div class="chrome">
+      <div class="chip-top">made with love</div>
 
-        <div class="progress" aria-hidden="true">
-          <span class="p active" id="p1"></span>
-          <span class="p" id="p2"></span>
-          <span class="p" id="p3"></span>
-        </div>
-      </header>
-
-      <!-- INTRO / LETTER SCREEN -->
-      <div id="intro" class="panel">
-        <h1 class="title">
-          Hiiii <span id="herNameIntro" class="name">you</span>
-          <span class="stamp" aria-hidden="true">💌</span>
-        </h1>
-
-        <div class="paper">
-          <div class="paper-top">
-            <span class="paper-tag">a quick note</span>
-            <span class="paper-heart" aria-hidden="true">♡</span>
-          </div>
-
-          <p id="letterText" class="letterText">
-            hey shonamma,
-            <br><br>
-            i wanted to say this properly, so i made this little page for you.
-            <br><br>
-            Hi love, happy Valentine’s Day. I just wanted to remind you how much you mean to me and how grateful I am to have you in my life. You make my days brighter with your kindness, your smile, and the way you always understand me. I’m really lucky to be yours, and I hope today makes you feel as special as you make me feel.
-            <br><br>
-            okay… ready? 😅
-          </p>
-        </div>
-
-        <div class="ctaRow">
-          <button id="proceed" class="btn primary">proceed <span aria-hidden="true">→</span></button>
-        </div>
-
-        <div class="hint" id="skipHint">tip: click proceed to skip typing</div>
+      <div class="step-dots" id="stepDots" aria-hidden="true">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
       </div>
+    </div>
 
-      <!-- YES/NO SCREEN -->
-      <div id="ask" class="panel hidden">
-        <h1 class="title">
-          Hiiii <span id="herName" class="name">you</span>
-          <span class="stamp" aria-hidden="true">💌</span>
-        </h1>
+    <!-- Screen 1: Intro letter -->
+    <section id="intro" class="screen">
+      <h1 class="headline">Hiiii <span id="herNameIntro">you</span> <span class="mail">💌</span></h1>
 
-        <p class="msg">
-          i made this for you because you’re really special to me.
-          <br><span class="accent">will you be my valentine?</span> 🥺
+      <div class="letter">
+        <div class="letter-top">
+          <span class="letter-label">a quick note ♡</span>
+        </div>
+
+        <p id="letterText">
+          hey shonamma,
+          <br><br>
+          i wanted to say this properly, so i made this little page for you.
+          <br><br>
+          Hi love, happy Valentine’s Day. I just wanted to remind you how much you mean to me and how grateful I am to have you in my life. You make my days brighter with your kindness, your smile, and the way you always understand me. I’m really lucky to be yours, and I hope today makes you feel as special as you make me feel.
+          <br><br>
+          okay… ready? 😅
         </p>
-
-        <div class="btns">
-          <button id="yes" class="btn primary glow">yes!! <span aria-hidden="true">💖</span></button>
-          <button id="no" class="btn ghost">no</button>
-        </div>
-
-        <div class="fineprint">
-          <div class="tiny">ps: the “no” button is a little shy</div>
-          <div class="tiny">you can say no… but i’ll be a little sad 😭</div>
-        </div>
       </div>
 
-      <!-- WIN SCREEN -->
-      <div id="win" class="panel result hidden">
-        <div class="bigEmoji" aria-hidden="true">💞</div>
-        <h2 class="winTitle">YAYYYYY</h2>
-        <p class="winText">okay it’s official. you’re my valentine 😌</p>
-        <div class="chip" id="dateIdea">valentine plan: call + movie + snacks 🍿📞</div>
-
-        <div class="tiny" style="margin-top:14px; opacity:.75;">
-          screenshot this so you can’t change your mind 😌
-        </div>
-      </div>
-
+      <button id="proceed" class="btn btn-primary">proceed →</button>
+      <div class="tiny" id="skipHint">tip: click proceed to skip typing</div>
     </section>
+
+    <!-- Screen 2: Ask -->
+    <section id="ask" class="screen hidden">
+      <h1 class="headline">Hiiii <span id="herName">you</span> <span class="mail">💌</span></h1>
+
+      <p class="msg">
+        I made this for you because you’re really special to me.
+      </p>
+
+      <p class="big-question">
+        WILL YOU BE MY VALENTINE? 🥺🌹
+      </p>
+
+      <div class="btns">
+        <button id="yes" class="btn btn-primary">yes!! 💖</button>
+        <button id="no" class="btn btn-ghost">no</button>
+      </div>
+
+      <div class="tiny">ps: the “no” button is a little shy</div>
+      <div class="tiny">you can say no… but i’ll be a little sad 😭</div>
+    </section>
+
+    <!-- Screen 3: Win -->
+    <section id="win" class="screen hidden">
+      <h2 class="win-title">YAYYYYY 💞</h2>
+      <p class="win-sub">okay it’s official. you’re my valentine 😌</p>
+      <div class="chip big" id="dateIdea">valentine plan: call + movie + snacks 🍿📞</div>
+    </section>
+
   </main>
 
   <script src="script.js"></script>

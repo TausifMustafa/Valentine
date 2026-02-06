@@ -1,34 +1,53 @@
+// Config
 const NAME = "Shonamma";
-const PLAN_TEXT = "Valentine plan: flowers + food + show + cuddles 🍿📞";
+const PLAN_TEXT = "Valentine plan: flowers + food + show + cuddles 🍿❤️";
 
-document.getElementById("herName").textContent = NAME;
-document.getElementById("dateIdea").textContent = PLAN_TEXT;
+// DOM refs
+const card = document.getElementById("card");
+const intro = document.getElementById("intro");
+const ask = document.getElementById("ask");
+const win = document.getElementById("win");
 
-const herNameIntro = document.getElementById("herNameIntro");
-if (herNameIntro) herNameIntro.textContent = NAME;
+const stepDots = document.getElementById("stepDots");
+const dots = stepDots ? Array.from(stepDots.querySelectorAll(".dot")) : [];
 
 const yesBtn = document.getElementById("yes");
 const noBtn = document.getElementById("no");
-
-const intro = document.getElementById("intro");
-const ask = document.getElementById("ask");
 const proceedBtn = document.getElementById("proceed");
 const skipHint = document.getElementById("skipHint");
 
-const p1 = document.getElementById("p1");
-const p2 = document.getElementById("p2");
-const p3 = document.getElementById("p3");
+// Inject names + plan text
+document.getElementById("herName").textContent = NAME;
+document.getElementById("dateIdea").textContent = PLAN_TEXT;
+const herNameIntro = document.getElementById("herNameIntro");
+if (herNameIntro) herNameIntro.textContent = NAME;
 
-function setStep(step) {
-  [p1, p2, p3].forEach((el) => el && el.classList.remove("active"));
-  if (step === 1 && p1) p1.classList.add("active");
-  if (step === 2 && p2) p2.classList.add("active");
-  if (step === 3 && p3) p3.classList.add("active");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Screen routing + step dots
+function setActiveStep(stepIndex) {
+  dots.forEach((d, i) => d.classList.toggle("active", i === stepIndex));
 }
-setStep(1);
 
-let noMoves = 0;
+function reveal(el) {
+  el.classList.remove("reveal");
+  void el.offsetWidth; // reflow to restart animation
+  el.classList.add("reveal");
+}
 
+function showScreen(which) {
+  [intro, ask, win].forEach((el) => el.classList.add("hidden"));
+  which.classList.remove("hidden");
+  reveal(which);
+
+  if (which === intro) setActiveStep(0);
+  if (which === ask) setActiveStep(1);
+  if (which === win) setActiveStep(2);
+}
+
+showScreen(intro);
+
+// Hearts burst
 function popHearts(count = 20) {
   for (let i = 0; i < count; i++) {
     const h = document.createElement("div");
@@ -42,14 +61,9 @@ function popHearts(count = 20) {
   }
 }
 
-yesBtn.addEventListener("click", () => {
-  document.getElementById("ask").classList.add("hidden");
-  document.getElementById("win").classList.remove("hidden");
-  popHearts(48);
-  setStep(3);
-});
+// Playful “no” button dodge
+let noMoves = 0;
 
-// playful “no” button: moves away
 function moveNoButton() {
   noMoves++;
 
@@ -65,9 +79,8 @@ function moveNoButton() {
 noBtn.addEventListener("mouseenter", moveNoButton);
 noBtn.addEventListener("click", moveNoButton);
 
-// --- typewriter animation ---
+// Typewriter (intro letter)
 const letterEl = document.getElementById("letterText");
-
 const TYPE_SPEED_MS = 18;
 const START_DELAY_MS = 250;
 
@@ -83,7 +96,6 @@ function escapeHtml(s) {
 let fullLetter = (letterEl.innerHTML || "").trim();
 fullLetter = fullLetter.replace(/<br\s*\/?>/gi, "\n").replace(/&nbsp;/g, " ");
 fullLetter = fullLetter.replace(/<[^>]*>/g, "");
-
 fullLetter = fullLetter
   .replace(/\r\n/g, "\n")
   .replace(/[ \t]+\n/g, "\n")
@@ -117,9 +129,7 @@ function typeStep() {
 
 setTimeout(typeStep, START_DELAY_MS);
 
-// proceed button behavior:
-// - if typing not finished: finish instantly
-// - if finished: go to yes/no page
+// Proceed: finish typing OR advance to ask
 proceedBtn.addEventListener("click", () => {
   if (!typingDone) {
     if (timerId) clearTimeout(timerId);
@@ -131,8 +141,134 @@ proceedBtn.addEventListener("click", () => {
     return;
   }
 
-  intro.classList.add("hidden");
-  ask.classList.remove("hidden");
-  popHearts(14);
-  setStep(2);
+  showScreen(ask);
+  popHearts(12);
 });
+
+// Yes: advance to win
+yesBtn.addEventListener("click", () => {
+  showScreen(win);
+  popHearts(40);
+});
+
+// Parallax tilt (subtle)
+if (!reduceMotion && card && card.dataset.tilt === "true") {
+  const maxRot = 6;
+  let raf = null;
+
+  function onMove(e) {
+    const rect = card.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+
+    const ry = (px - 0.5) * (maxRot * 2);
+    const rx = (0.5 - py) * (maxRot * 2);
+
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      card.classList.add("tilting");
+      card.style.setProperty("--rx", `${rx.toFixed(2)}deg`);
+      card.style.setProperty("--ry", `${ry.toFixed(2)}deg`);
+    });
+  }
+
+  function onLeave() {
+    card.classList.remove("tilting");
+    card.style.setProperty("--rx", "0deg");
+    card.style.setProperty("--ry", "0deg");
+  }
+
+  card.addEventListener("pointermove", onMove);
+  card.addEventListener("pointerleave", onLeave);
+}
+
+// Sparkle trail on button hover + small burst on click
+function attachSparkles(btn) {
+  if (!btn || reduceMotion) return;
+
+  let last = 0;
+
+  btn.addEventListener("pointermove", (e) => {
+    const now = performance.now();
+    if (now - last < 28) return;
+    last = now;
+
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const s = document.createElement("span");
+    s.className = "sparkle";
+    const size = 6 + Math.random() * 10;
+
+    s.style.width = `${size}px`;
+    s.style.height = `${size}px`;
+    s.style.left = `${x}px`;
+    s.style.top = `${y}px`;
+
+    btn.appendChild(s);
+    setTimeout(() => s.remove(), 700);
+  });
+
+  btn.addEventListener("click", () => {
+    for (let k = 0; k < 6; k++) {
+      const rect = btn.getBoundingClientRect();
+      const s = document.createElement("span");
+      s.className = "sparkle";
+      const size = 7 + Math.random() * 12;
+
+      s.style.width = `${size}px`;
+      s.style.height = `${size}px`;
+      s.style.left = `${rect.width * (0.25 + Math.random() * 0.5)}px`;
+      s.style.top = `${rect.height * (0.25 + Math.random() * 0.5)}px`;
+
+      btn.appendChild(s);
+      setTimeout(() => s.remove(), 700);
+    }
+  });
+}
+
+attachSparkles(proceedBtn);
+attachSparkles(yesBtn);
+
+// Falling petals (decorative)
+const petalsLayer = document.getElementById("petals");
+
+function spawnPetal() {
+  if (!petalsLayer) return;
+  if (petalsLayer.childElementCount > 120) return;
+
+  const p = document.createElement("span");
+  p.className = "petal";
+
+  const size = 14 + Math.random() * 18; // 14..32
+  const h = size * (1.15 + Math.random() * 0.35);
+
+  p.style.width = `${size}px`;
+  p.style.height = `${h}px`;
+  p.style.left = `${Math.random() * 100}vw`;
+
+  const dur = 6 + Math.random() * 7; // 6..13s
+  p.style.animationDuration = `${dur}s`;
+
+  const drift = (Math.random() * 220 - 110).toFixed(0);
+  p.style.setProperty("--drift", `${drift}px`);
+
+  const rot = (Math.random() * 1100 - 550).toFixed(0);
+  p.style.setProperty("--rot", `${rot}deg`);
+
+  const op = (0.62 + Math.random() * 0.28).toFixed(2);
+  p.style.setProperty("--op", op);
+
+  petalsLayer.appendChild(p);
+  p.addEventListener("animationend", () => p.remove());
+}
+
+if (!reduceMotion) {
+  setInterval(() => {
+    spawnPetal();
+    if (Math.random() < 0.6) spawnPetal();
+  }, 120);
+
+  for (let k = 0; k < 28; k++) setTimeout(spawnPetal, k * 70);
+}
